@@ -1,14 +1,29 @@
 {
-  "name": "@hirak/rtk-setup-next",
-  "version": "1.0.0",
+  "name": "@1hirak/rtk-setup-next",
+  "version": "1.0.1",
   "description": "A package to set up Redux Toolkit in Next.js projects",
+  "keywords": [
+    "redux",
+    "next.js",
+    "setup",
+    "rtk"
+  ],
+  "homepage": "https://github.com/1hirak/rtk-setup-next#readme",
+  "bugs": {
+    "url": "https://github.com/1hirak/rtk-setup-next/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1hirak/rtk-setup-next.git"
+  },
+  "license": "MIT",
+  "author": "Hirakjyoti Das",
+  "type": "commonjs",
+  "main": "setup.js",
   "bin": {
-    "rtk-setup-next": "./setup.js"
+    "rtk-setup-next": "setup.js"
   },
   "scripts": {
     "test": "echo \"No tests specified\""
-  },
-  "keywords": ["redux", "next.js", "setup", "rtk"],
-  "author": "Hirakjyoti Das",
-  "license": "MIT"
+  }
 }

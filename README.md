@@ -1,6 +1,6 @@
 # Redux Toolkit Next.js Setup
 
-[![npm version](https://badge.fury.io/js/%40hirak%2Frtk-setup-next.svg)](https://badge.fury.io/js/%40hirak%2Frtk-setup-next)[![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/@1hirak/rtk-setup-next.svg)](https://badge.fury.io/js/%40hirak%2Frtk-setup-next)[![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A simple CLI tool to quickly set up Redux Toolkit in your Next.js 13+ App Router projects.
 
