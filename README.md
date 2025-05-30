@@ -9,6 +9,8 @@ A simple CLI tool to quickly set up Redux Toolkit in your Next.js 13+ App Router
 
     npx @1hirak/rtk-setup-next
 
+    pnpm dlx @1hirak/rtk-setup-next
+
 ## What it does
 
 This tool automatically:
