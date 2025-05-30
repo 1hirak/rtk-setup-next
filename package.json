@@ -1,6 +1,6 @@
 {
   "name": "@1hirak/rtk-setup-next",
-  "version": "1.0.5",
+  "version": "1.0.9",
   "description": "A package to set up Redux Toolkit in Next.js projects",
   "keywords": [
     "redux",
