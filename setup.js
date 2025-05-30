@@ -1,12 +1,21 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
+
+
+// Detect package manager (npm, pnpm, or yarn)
+const isPnpm = process.argv.includes("--pnpm");
+const isYarn = process.argv.includes("--yarn");
+const installCmd = isPnpm ? "pnpm add" : isYarn ? "yarn add" : "npm install --save";
 
 // Install Redux packages in the user's project
-console.log('Installing Redux packages...');
-execSync('npm install --save redux react-redux @reduxjs/toolkit', { stdio: 'inherit' });
+console.log("Installing Redux packages...");
+execSync(`${installCmd} redux react-redux @reduxjs/toolkit`, {
+  stdio: "inherit",
+});
+
 
 // Helper to ensure directories exist
 function ensureDir(filePath) {
@@ -22,7 +31,15 @@ const baseDir = process.cwd();
 // Create Redux files
 
 // 1. demoSlice.js
-const demoSlicePath = path.join(baseDir, 'src', 'app', 'redux', 'features', 'demo', 'demoSlice.js');
+const demoSlicePath = path.join(
+  baseDir,
+  "src",
+  "app",
+  "redux",
+  "features",
+  "demo",
+  "demoSlice.js"
+);
 ensureDir(demoSlicePath);
 fs.writeFileSync(
   demoSlicePath,
@@ -51,7 +68,7 @@ export default demoSlice.reducer;
 );
 
 // 2. store.js
-const storePath = path.join(baseDir, 'src', 'app', 'redux', 'store.js');
+const storePath = path.join(baseDir, "src", "app", "redux", "store.js");
 ensureDir(storePath);
 fs.writeFileSync(
   storePath,
@@ -70,7 +87,7 @@ export const store = () => {
 );
 
 // 3. provider.jsx
-const providerPath = path.join(baseDir, 'src', 'app', 'redux', 'provider.jsx');
+const providerPath = path.join(baseDir, "src", "app", "redux", "provider.jsx");
 ensureDir(providerPath);
 fs.writeFileSync(
   providerPath,
@@ -204,15 +221,17 @@ export default OptimizedReduxProvider;
 );
 
 // 4. Modify layout.js
-const layoutPath = path.join(baseDir, 'src', 'app', 'layout.js');
+const layoutPath = path.join(baseDir, "src", "app", "layout.js");
 const importStatement = `import { ReduxProvider } from './redux/provider';`;
 
 if (fs.existsSync(layoutPath)) {
-  let content = fs.readFileSync(layoutPath, 'utf8');
+  let content = fs.readFileSync(layoutPath, "utf8");
 
   // Check if ReduxProvider is already set up
-  if (content.includes('ReduxProvider')) {
-    console.log('ReduxProvider already present in layout.js. Skipping modification.');
+  if (content.includes("ReduxProvider")) {
+    console.log(
+      "ReduxProvider already present in layout.js. Skipping modification."
+    );
   } else {
     // Add import statement if not present
     if (!content.includes(importStatement)) {
@@ -220,10 +239,10 @@ if (fs.existsSync(layoutPath)) {
     }
 
     // Find the return statement and wrap its content with ReduxProvider
-    const returnIndex = content.indexOf('return (');
+    const returnIndex = content.indexOf("return (");
     if (returnIndex !== -1) {
-      const start = returnIndex + 'return ('.length;
-      const end = content.lastIndexOf(');');
+      const start = returnIndex + "return (".length;
+      const end = content.lastIndexOf(");");
       if (end > start) {
         const returnContent = content.substring(start, end).trim();
         const modifiedContent = `
@@ -231,18 +250,27 @@ if (fs.existsSync(layoutPath)) {
             ${returnContent}
           </ReduxProvider>
         `;
-        content = content.substring(0, start) + modifiedContent + content.substring(end);
+        content =
+          content.substring(0, start) +
+          modifiedContent +
+          content.substring(end);
         fs.writeFileSync(layoutPath, content.trim());
-        console.log('Modified layout.js to include ReduxProvider.');
+        console.log("Modified layout.js to include ReduxProvider.");
       } else {
-        console.log('Could not find valid return statement in layout.js. Please add ReduxProvider manually.');
+        console.log(
+          "Could not find valid return statement in layout.js. Please add ReduxProvider manually."
+        );
       }
     } else {
-      console.log('Could not find return statement in layout.js. Please add ReduxProvider manually.');
+      console.log(
+        "Could not find return statement in layout.js. Please add ReduxProvider manually."
+      );
     }
   }
 } else {
-  console.log('src/app/layout.js not found. Creating a new one with ReduxProvider...');
+  console.log(
+    "src/app/layout.js not found. Creating a new one with ReduxProvider..."
+  );
   ensureDir(layoutPath);
   fs.writeFileSync(
     layoutPath,
@@ -262,4 +290,4 @@ export default function RootLayout({ children }) {
   );
 }
 
-console.log('✅ Redux setup complete!');
+console.log("✅ Redux setup complete!");

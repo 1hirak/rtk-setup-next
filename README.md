@@ -7,7 +7,7 @@ A simple CLI tool to quickly set up Redux Toolkit in your Next.js 13+ App Router
 
 ## Installation
 
-    npx @hirak/rtk-setup-next
+    npx @1hirak/rtk-setup-next
 
 ## What it does
 
@@ -97,7 +97,7 @@ Then add it to your store:
 
 ## Contributing
 
-Issues and pull requests are welcome on [GitHub](https://github.com/yourusername/rtk-setup-next).
+Issues and pull requests are welcome on [GitHub](https://github.com/1hirak/rtk-setup-next).
 
 ## License
 
