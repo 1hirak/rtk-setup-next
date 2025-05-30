@@ -4,25 +4,28 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
+// Helper function to ensure directory exists
+function ensureDir(filePath) {
+  const dirName = path.dirname(filePath);
+  if (fs.existsSync(dirName)) {
+    return true;
+  }
+  fs.mkdirSync(dirName, { recursive: true });
+}
 
-// Detect package manager (npm, pnpm, or yarn)
 const isPnpm = process.argv.includes("--pnpm");
 const isYarn = process.argv.includes("--yarn");
 const installCmd = isPnpm ? "pnpm add" : isYarn ? "yarn add" : "npm install --save";
 
 // Install Redux packages in the user's project
 console.log("Installing Redux packages...");
-execSync(`${installCmd} redux react-redux @reduxjs/toolkit`, {
-  stdio: "inherit",
-});
-
-
-// Helper to ensure directories exist
-function ensureDir(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
+try {
+  execSync(`${installCmd} redux react-redux @reduxjs/toolkit`, {
+    stdio: "inherit",
+  });
+} catch (error) {
+  console.error("Installation failed:", error.message);
+  process.exit(1);
 }
 
 // Base directory for files (assuming Next.js app directory structure)
@@ -92,101 +95,15 @@ ensureDir(providerPath);
 fs.writeFileSync(
   providerPath,
   `
-'use client';
+  'use client';
 
 import { Provider } from "react-redux";
-import { useRef, useEffect, useMemo, useCallback, useState } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { store } from './store';
 
-export function ReduxProvider({ children }) {
-  // Use useRef to maintain store instance across re-renders
-  const storeRef = useRef(null);
-  const [storeVersion, setStoreVersion] = useState(0);
-  
-  // Initialize store only once using useMemo, but allow re-creation when needed
-  const storeInstance = useMemo(() => {
-    // Only create store if it doesn't exist or if we need a new version
-    if (!storeRef.current) {
-      storeRef.current = typeof store === 'function' ? store() : store;
-      
-      // Subscribe to store changes to trigger re-renders when state changes
-      if (storeRef.current && typeof storeRef.current.subscribe === 'function') {
-        const unsubscribe = storeRef.current.subscribe(() => {
-          // Force re-render when store state changes
-          setStoreVersion(prev => prev + 1);
-        });
-        
-        // Store the unsubscribe function for cleanup
-        storeRef.current._unsubscribe = unsubscribe;
-      }
-    }
-    return storeRef.current;
-  }, []); // Empty dependency array - store should only be created once
-
-  // Effect to handle store subscription and cleanup
-  useEffect(() => {
-    const currentStore = storeRef.current;
-    
-    // Development-only logging
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Redux Provider mounted, store version:', storeVersion);
-    }
-    
-    return () => {
-      // Cleanup subscription when component unmounts
-      if (currentStore && currentStore._unsubscribe) {
-        currentStore._unsubscribe();
-        delete currentStore._unsubscribe;
-      }
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Redux Provider cleanup');
-      }
-    };
-  }, [storeVersion]);
-
-  // Don't memoize the Provider itself to allow re-renders when store changes
-  return (
-    <Provider store={storeInstance}>
-      {children}
-    </Provider>
-  );
-}
-
-// Alternative version that's simpler but still reactive
-export function SimpleReduxProvider({ children }) {
-  const storeRef = useRef(null);
-  const [, forceUpdate] = useState({});
-  
-  // Create store instance only once
-  const storeInstance = useMemo(() => {
-    if (!storeRef.current) {
-      storeRef.current = typeof store === 'function' ? store() : store;
-    }
-    return storeRef.current;
-  }, []);
-
-  // Force re-render when store state changes
-  useEffect(() => {
-    if (storeInstance && typeof storeInstance.subscribe === 'function') {
-      const unsubscribe = storeInstance.subscribe(() => {
-        // Trigger re-render by updating state
-        forceUpdate({});
-      });
-
-      return unsubscribe;
-    }
-  }, [storeInstance]);
-
-  return (
-    <Provider store={storeInstance}>
-      {children}
-    </Provider>
-  );
-}
 
 // Most recommended version - balances optimization with reactivity
-export function OptimizedReduxProvider({ children }) {
+export function ReduxProvider({ children }) {
   const storeRef = useRef(null);
   
   // Initialize store only once
@@ -214,8 +131,7 @@ export function OptimizedReduxProvider({ children }) {
   );
 }
 
-// Export the recommended version as default
-export default OptimizedReduxProvider;
+export default ReduxProvider;
 
   `.trim()
 );
